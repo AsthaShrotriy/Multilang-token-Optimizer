@@ -5,62 +5,117 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState('chinese')
   const [selectedModel, setSelectedModel] = useState('claude-haiku')
   const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState(null)
 
   const handleOptimize = () => {
     setLoading(true)
-    // Simulate API call
     setTimeout(() => {
+      setResult({
+        tokenSavings: 65,
+        costSavings: 0.0045,
+        language: 'Chinese',
+        response: 'This is the optimized response translated back to English. It contains the same information but was generated using fewer tokens by leveraging the efficiency of Chinese tokenization.',
+        targetResponse: '这是优化后的中文回复。它包含相同的信息，但通过利用中文标记化的效率使用更少的标记生成。'
+      })
       setLoading(false)
     }, 2000)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">TokenWise</h1>
-          <p className="text-gray-600">Multilanguage Token & Cost Optimizer</p>
-        </div>
+    <div className="container">
+      {/* Header */}
+      <div className="header">
+        <h1 className="title">TokenWise</h1>
+        <p className="subtitle">
+          Reduce AI API costs by 30-70% using multilingual token optimization
+        </p>
+      </div>
 
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+      {/* Main Form */}
+      <div className="form-card">
+        <div className="form-group">
+          <label className="label">Your Prompt</label>
           <textarea
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Enter your prompt here..."
-            className="w-full p-3 border border-gray-300 rounded-lg h-32 mb-4"
+            className="textarea"
           />
+        </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="form-row">
+          <div className="form-group">
+            <label className="label">Target Language</label>
             <select
               value={selectedLanguage}
               onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="p-3 border border-gray-300 rounded-lg"
+              className="select"
             >
-              <option value="chinese">Chinese (50% savings)</option>
-              <option value="japanese">Japanese (70% savings)</option>
-              <option value="korean">Korean (45% savings)</option>
+              <option value="chinese">🇨🇳 Chinese (50% savings)</option>
+              <option value="japanese">🇯🇵 Japanese (70% savings)</option>
+              <option value="korean">🇰🇷 Korean (45% savings)</option>
             </select>
+          </div>
 
+          <div className="form-group">
+            <label className="label">AI Model</label>
             <select
               value={selectedModel}
               onChange={(e) => setSelectedModel(e.target.value)}
-              className="p-3 border border-gray-300 rounded-lg"
+              className="select"
             >
               <option value="claude-haiku">Claude 3 Haiku</option>
               <option value="cohere">Cohere Command R</option>
               <option value="mistral">Mistral 8x7B</option>
             </select>
           </div>
-
-          <button
-            onClick={handleOptimize}
-            disabled={loading || !query}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? 'Optimizing...' : 'Optimize'}
-          </button>
         </div>
+
+        <button
+          onClick={handleOptimize}
+          disabled={loading || !query}
+          className="button"
+        >
+          {loading ? '🔄 Optimizing...' : '🚀 Optimize Tokens'}
+        </button>
       </div>
+
+      {/* Results */}
+      {result && (
+        <div className="results-card">
+          <h2 className="results-title">✨ Optimization Results</h2>
+          
+          <div className="stats-grid">
+            <div className="stat-card green">
+              <div className="stat-label">Token Savings</div>
+              <div className="stat-value">{result.tokenSavings}%</div>
+            </div>
+            <div className="stat-card blue">
+              <div className="stat-label">Cost Savings</div>
+              <div className="stat-value">${result.costSavings}</div>
+            </div>
+            <div className="stat-card purple">
+              <div className="stat-label">Language Used</div>
+              <div className="stat-value">{result.language}</div>
+            </div>
+          </div>
+
+          <div className="responses-grid">
+            <div className="response-section">
+              <h3>📝 Optimized Response</h3>
+              <div className="response-box">
+                {result.response}
+              </div>
+            </div>
+            <div className="response-section">
+              <h3>🌏 Target Language</h3>
+              <div className="response-box">
+                {result.targetResponse}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
