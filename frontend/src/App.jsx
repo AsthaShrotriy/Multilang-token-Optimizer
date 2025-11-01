@@ -6,19 +6,56 @@ function App() {
   const [selectedModel, setSelectedModel] = useState('claude-haiku')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
+  const [error, setError] = useState('')
 
-  const handleOptimize = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setResult({
-        tokenSavings: 65,
-        costSavings: 0.0045,
-        language: 'Chinese',
-        response: 'This is the optimized response translated back to English. It contains the same information but was generated using fewer tokens by leveraging the efficiency of Chinese tokenization.',
-        targetResponse: '这是优化后的中文回复。它包含相同的信息，但通过利用中文标记化的效率使用更少的标记生成。'
+  const languageToCode = {
+    chinese: { code: 'zh-CN', label: 'Chinese', savings: 50 },
+    japanese: { code: 'ja', label: 'Japanese', savings: 70 },
+    korean: { code: 'ko', label: 'Korean', savings: 45 }
+  }
+
+  const modelToBedrockId = (modelKey) => {
+    // Currently backend fully supports Anthropic Claude; fallback to Haiku for others
+    if (modelKey === 'claude-haiku') return 'anthropic.claude-3-haiku-20240307-v1:0'
+    if (modelKey === 'cohere') return 'anthropic.claude-3-haiku-20240307-v1:0'
+    if (modelKey === 'mistral') return 'anthropic.claude-3-haiku-20240307-v1:0'
+    return 'anthropic.claude-3-haiku-20240307-v1:0'
+  }
+
+  const handleOptimize = async () => {
+    try {
+      setError('')
+      setLoading(true)
+      const langMeta = languageToCode[selectedLanguage]
+      const modelId = modelToBedrockId(selectedModel)
+
+      const resp = await fetch('http://127.0.0.1:5000/api/bedrock/generate-translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: query,
+          language: langMeta.code,
+          model: modelId
+        })
       })
+
+      const data = await resp.json()
+      if (!resp.ok) {
+        throw new Error(data && data.error ? data.error : 'Request failed')
+      }
+
+      setResult({
+        tokenSavings: langMeta.savings,
+        costSavings: 0.0,
+        language: langMeta.label,
+        response: data.translatedText, // Optimized Response (English)
+        targetResponse: data.generatedText // Generated Response (target language)
+      })
+    } catch (e) {
+      setError(e.message || 'Something went wrong')
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   return (
@@ -80,6 +117,11 @@ function App() {
         </button>
       </div>
 
+      {/* Error */}
+      {error && (
+        <div className="error-banner">{error}</div>
+      )}
+
       {/* Results */}
       {result && (
         <div className="results-card">
@@ -108,7 +150,7 @@ function App() {
               </div>
             </div>
             <div className="response-section">
-              <h3>🌏 Target Language</h3>
+              <h3>🌏 Generated Response</h3>
               <div className="response-box">
                 {result.targetResponse}
               </div>
