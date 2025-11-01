@@ -4,13 +4,22 @@ function App() {
   const [query, setQuery] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('chinese')
   const [selectedModel, setSelectedModel] = useState('claude-haiku')
+  const [loading, setLoading] = useState(false)
+
+  const handleOptimize = () => {
+    setLoading(true)
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">TokenWise</h1>
-          <p className="text-gray-600">AI Cost Optimizer</p>
+          <p className="text-gray-600">Multilanguage Token & Cost Optimizer</p>
         </div>
 
         <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
@@ -43,8 +52,12 @@ function App() {
             </select>
           </div>
 
-          <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-            Optimize
+          <button
+            onClick={handleOptimize}
+            disabled={loading || !query}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Optimizing...' : 'Optimize'}
           </button>
         </div>
       </div>
