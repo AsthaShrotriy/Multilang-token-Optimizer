@@ -57,7 +57,9 @@ cd backend
 npm install
 cp .env.sample .env
 # Configure AWS credentials and region
-npm start
+npm run dev    # Development (with auto-reload)
+# OR
+npm start      # Production
 ```
 
 ### Frontend Setup
