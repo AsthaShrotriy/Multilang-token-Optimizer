@@ -17,6 +17,8 @@ function App() {
   const [error, setError] = useState('')
   const [toast, setToast] = useState({ visible: false, message: '' })
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+
   const languageToCode = {
     chinese: { code: 'zh-CN', label: 'Chinese', savings: 50 },
     japanese: { code: 'ja', label: 'Japanese', savings: 70 },
@@ -27,7 +29,7 @@ function App() {
     const loadModels = async () => {
       try {
         setModelsLoading(true)
-        const resp = await fetch('http://127.0.0.1:5000/api/bedrock/models')
+        const resp = await fetch(`${API_BASE_URL}/api/bedrock/models`)
         const data = await resp.json()
         if (resp.ok && data && Array.isArray(data.models)) {
           const textModels = data.models
@@ -66,7 +68,7 @@ function App() {
       const langMeta = languageToCode[selectedLanguage]
       const modelId = selectedModel || 'anthropic.claude-3-haiku-20240307-v1:0'
 
-      const resp = await fetch('http://127.0.0.1:5000/api/bedrock/generate-translate', {
+      const resp = await fetch(`${API_BASE_URL}/api/bedrock/generate-translate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -44,6 +44,31 @@ TokenWise leverages the token efficiency differences between languages to optimi
 - Latency impact analysis
 - Real-time performance comparison
 
+## 🚀 Deployment
+
+### Easy Deployment (Railway + Netlify)
+
+#### Backend (Railway):
+1. Push code to GitHub
+2. Go to [railway.app](https://railway.app) → Connect GitHub repo
+3. Set environment variables:
+   ```
+   AWS_REGION=us-east-1
+   AWS_ACCESS_KEY_ID=your_key
+   AWS_SECRET_ACCESS_KEY=your_secret
+   ```
+4. Deploy automatically
+
+#### Frontend (Netlify):
+1. Go to [netlify.com](https://netlify.com) → Import from GitHub
+2. Set **Base directory**: `frontend`
+3. Set **Build command**: `npm run build`
+4. Set **Publish directory**: `frontend/dist`
+5. Deploy
+
+### Alternative: Vercel Frontend
+Replace Netlify with [vercel.com](https://vercel.com) using same settings.
+
 ## 🛠️ Setup
 
 ### Prerequisites
@@ -71,13 +96,39 @@ npm run dev
 
 ## 🔧 Configuration
 
-### Environment Variables (`backend/.env`)
+### Environment Variables
+
+#### Backend (`backend/.env`)
 ```bash
 AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=your_key
-AWS_SECRET_ACCESS_KEY=your_secret
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
 PORT=5000
 ```
+
+#### Frontend Environment Files
+The frontend automatically uses different API URLs based on environment:
+
+**Development** (`frontend/.env.development`):
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:5000
+```
+
+**Production** (`frontend/.env.production`):
+```bash
+VITE_API_BASE_URL=https://your-railway-backend-url.railway.app
+```
+
+**Fallback** (`frontend/.env`):
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:5000
+```
+
+### Changing Backend URL
+To update the backend URL:
+1. **For development**: Update `frontend/.env.development`
+2. **For production**: Update `frontend/.env.production` or set `VITE_API_BASE_URL` in Netlify environment variables
+3. **Redeploy** frontend
 
 ### Supported Models
 - **Anthropic**: Claude 3.5 Sonnet/Haiku, Claude 3 Opus/Sonnet/Haiku
