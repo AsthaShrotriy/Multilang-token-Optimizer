@@ -73,9 +73,9 @@ const DetailedMetrics = ({ result }) => {
         </div>
       </div>
 
-      {/* Performance & Quality */}
+      {/* Performance Metrics */}
       <div className="metric-group">
-        <h3 className="metric-title">⚡ Performance & Quality</h3>
+        <h3 className="metric-title">⚡ Performance Metrics</h3>
         <div className="performance-grid">
           <div className="perf-card">
             <div className="perf-label">Processing Time</div>
@@ -84,14 +84,6 @@ const DetailedMetrics = ({ result }) => {
           <div className="perf-card">
             <div className="perf-label">Latency Impact</div>
             <div className="perf-value">{result.metrics.performance.estimatedLatencyIncrease}</div>
-          </div>
-          <div className="perf-card">
-            <div className="perf-label">Quality Score</div>
-            <div className="perf-value">{result.metrics.quality.estimatedAccuracy}%</div>
-          </div>
-          <div className="perf-card">
-            <div className="perf-label">Confidence</div>
-            <div className="perf-value">{Math.round(result.metrics.quality.confidenceScore * 100)}%</div>
           </div>
         </div>
       </div>
@@ -102,16 +94,8 @@ const DetailedMetrics = ({ result }) => {
         <div className="recommendations-card">
           <div className="rec-grid">
             <div className="rec-item">
-              <strong>Use Case:</strong><br/>
-              {result.metrics.performance.recommendedUseCase}
-            </div>
-            <div className="rec-item">
               <strong>Break-even:</strong><br/>
               {result.metrics.costs.breakEven} characters minimum
-            </div>
-            <div className="rec-item">
-              <strong>Complexity:</strong><br/>
-              {result.metrics.quality.languageComplexity} for {result.language}
             </div>
             <div className="rec-item">
               <strong>Output Efficiency:</strong><br/>

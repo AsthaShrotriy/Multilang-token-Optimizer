@@ -81,50 +81,13 @@ function App() {
         throw new Error(data && data.error ? data.error : 'Request failed')
       }
 
-      // Create metrics for display
-      const mockMetrics = {
-        tokens: {
-          english: {
-            input: Math.ceil(query.length / 4),
-            output: Math.ceil(query.length / 4 * 1.2),
-            total: Math.ceil(query.length / 4 * 2.2)
-          },
-          optimized: {
-            input: Math.ceil(query.length / 4),
-            output: Math.ceil(query.length / 4 * 1.2 * (1 - langMeta.savings/100)),
-            total: Math.ceil(query.length / 4 * (2.2 - langMeta.savings/100))
-          },
-          savings: {
-            absolute: Math.ceil(query.length / 4 * langMeta.savings/100 * 1.2),
-            percentage: langMeta.savings,
-            outputSavingsPercent: langMeta.savings
-          }
-        },
-        costs: {
-          english: { total: 0.00234 },
-          optimized: { model: 0.00156, translation: 0.00002, total: 0.00158 },
-          savings: { absolute: 0.00076, percentage: 32.5 },
-          breakEven: Math.ceil(query.length * 1.5)
-        },
-        performance: {
-          processingTime: 1200 + Math.random() * 800,
-          estimatedLatencyIncrease: '2.1x',
-          recommendedUseCase: 'Viable for batch processing'
-        },
-        quality: {
-          estimatedAccuracy: langMeta.savings === 70 ? 95 : langMeta.savings === 50 ? 92 : 90,
-          confidenceScore: 0.85 + Math.random() * 0.1,
-          languageComplexity: langMeta.savings === 70 ? 'High' : 'Medium'
-        }
-      }
-
       setResult({
-        tokenSavings: langMeta.savings,
-        costSavings: 0.00076,
-        language: langMeta.label,
+        tokenSavings: data.metrics.tokens.savings.percentage,
+        costSavings: data.metrics.costs.savings.absolute,
+        language: languageToCode[selectedLanguage].label,
         response: data.translatedText,
         targetResponse: data.generatedText,
-        metrics: mockMetrics
+        metrics: data.metrics
       })
     } catch (e) {
       const msg = e.message || 'Something went wrong'

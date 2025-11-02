@@ -451,24 +451,23 @@ app.post('/api/bedrock/generate-translate', async (req, res) => {
         tokens: {
           english: { input: baseline.usage.input, output: baseline.usage.output, total: baseline.usage.total },
           optimized: { input: optimized.usage.input, output: optimized.usage.output, total: optimized.usage.total },
-          savings: { absolute: tokensSavingsAbs, percentage: tokensSavingsPct, outputSavingsPercent: tokensSavingsPct }
+          savings: { 
+            absolute: tokensSavingsAbs, 
+            percentage: tokensSavingsPct, 
+            outputSavingsPercent: baseline.usage.output > 0 ? Math.round(((baseline.usage.output - optimized.usage.output) / baseline.usage.output) * 100) : 0
+          }
         },
         costs: {
           english: { total: Number(englishCost.toFixed(6)) },
           optimized: { model: Number(optimizedCost.toFixed(6)), translation: 0, total: Number((optimizedCost + 0).toFixed(6)) },
           savings: { absolute: Number(costSavingsAbs.toFixed(6)), percentage: costSavingsPct },
-          breakEven: Math.max(1, Math.ceil(text.length * 1.5))
+          breakEven: costSavingsAbs > 0 ? text.length : Math.ceil(text.length / (1 - tokensSavingsPct/100))
         },
         performance: {
           processingTime: optimized.latencyMs + baseline.latencyMs,
           optimizedLatencyMs: optimized.latencyMs,
           englishLatencyMs: baseline.latencyMs,
           estimatedLatencyIncrease: baseline.latencyMs > 0 ? `${((optimized.latencyMs + 0) / baseline.latencyMs).toFixed(1)}x` : 'n/a'
-        },
-        quality: {
-          estimatedAccuracy: 95,
-          confidenceScore: 0.9,
-          languageComplexity: 'Medium'
         }
       }
     });
